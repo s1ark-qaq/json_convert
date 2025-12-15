@@ -5,26 +5,38 @@ import (
 	"fmt"
 )
 
-type User struct {
-	Name   string
-	Age    int
-	Avatar []string
+func main() {
+	marshalStruct()
+
+	unmarshalToStruct()
+
+	unmarshalToMap()
 }
 
-func main() {
-	var u = &User{
-		Name: "s1ark",
-		Age:  20,
-		Avatar: []string{
-			"https://123.jpg",
-			"https://321.jpg",
-		},
+func marshalStruct() {
+	var u = &Student{
+		Name:   "s1ark",
+		Age:    20,
+		IsGood: true,
 	}
+	resp, _ := json.Marshal(u)
+	fmt.Println(string(resp))
+}
 
-	byteU, _ := json.Marshal(u)
-	fmt.Println(string(byteU))
+func unmarshalToStruct() {
+	jsonStr := `{"Name":"张三","Age":21,"IsGood":true}`
+	var u Student
+	json.Unmarshal([]byte(jsonStr), &u)
+	fmt.Println(u)
+}
 
-	var u2 User
-	json.Unmarshal(byteU, &u2)
-	fmt.Println(u2)
+func unmarshalToMap() {
+	jsonStr := `{"Name":"s1ark","Age":23,"Interests":{"Sports":["Run","Jump"]}}`
+
+	data := make(map[string]any, 0)
+	json.Unmarshal([]byte(jsonStr), &data)
+
+	fmt.Println(data["Name"].(string))
+	fmt.Println(data["Interests"].(map[string]any)["Sports"].([]string))
+	fmt.Println(data)
 }
