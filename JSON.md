@@ -1,22 +1,12 @@
 # json.Marshal
 将传入的数据编码为json的数据格式（序列化）
 
+序列化的大概步骤：
+对v进行反射，获取储存在内存的类型和data-->v.type获取底层类型，使用对应类型的编码器进行加工-->
+针对不同类型（处理基础类型string\int\bool）进行递归处理为基础类型，基础类型可以直接序列化为
+json格式
+
 ## 1.反射转换any-->reflect.Value
-
-func unpackEface(i any) Value {
-e := (*abi.EmptyInterface)(unsafe.Pointer(&i))
-// NOTE: don't read e.word until we know whether it is really a pointer or not.
-t := e.Type
-if t == nil {
-return Value{}
-}
-f := flag(t.Kind())
-if t.IfaceIndir() {
-f |= flagIndir
-}
-return Value{t, e.Data, f}
-}
-
 e := (*abi.EmptyInterface)(unsafe.Pointer(&i))
 unsafe.Pointer能把任意指针变成可转换为其他指针类型的指针类型（通用指针，不携带类型信息）
 
@@ -34,11 +24,11 @@ typeEncoder是根据type的不同返回不同的编码器，例如type=string，
 # json.Unmarshal
 将传入的[]byte解析到指定格式的变量（指针类型，因为需要修改变量内容）内部（反序列化）
 
-## 1.先对传入的指针进行反射拿到反射值（主要是获取变量类型）
-使用reflect.Value（v）,根据data的类型选择不同的解码器。在src中首先根据传入的[]byte的类型（字面量
-、数组、对象）三种类型选择不同的解码器。
-
-## 2.在不同的解码器中对v进行处理
+反序列化到结构体的大概步骤：
+首先获取v的反射值-->对传入的[]byte进行scan，获取第一节内容（根据每一节内容的类型，也就是
+输入json的格式，数组、 对象、 字符串，根据格式的不同选择不同的解码器）-->拿到v的内存地址，
+方便后面修改内容-->外层for循环：遍历结构体字段，内层for循环根据结构体字段的位置索引进行初始
+化，拿到字段地址方便后续修改内容-->将json序列化到对应的字段，使用反射修改内存值
 
 
 ## 背景知识
