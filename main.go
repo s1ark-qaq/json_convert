@@ -37,6 +37,6 @@ func unmarshalToMap() {
 	json.Unmarshal([]byte(jsonStr), &data)
 
 	fmt.Println(data["Name"].(string))
-	fmt.Println(data["Interests"].(map[string]any)["Sports"].([]string))
+	fmt.Println(data["Interests"].(map[string]any)["Sports"].([]any))
 	fmt.Println(data)
 }
