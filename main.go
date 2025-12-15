@@ -8,6 +8,8 @@ import (
 func main() {
 	marshalStruct()
 
+	marshalNorStruct()
+	
 	unmarshalToStruct()
 
 	unmarshalToMap()
@@ -21,6 +23,18 @@ func marshalStruct() {
 	}
 	resp, _ := json.Marshal(u)
 	fmt.Println(string(resp))
+}
+
+func marshalNorStruct() {
+	var u = struct {
+		Name string
+		Age  int
+	}{
+		Name: "s1ark",
+		Age:  20,
+	}
+	data, _ := json.Marshal(u)
+	fmt.Println(string(data))
 }
 
 func unmarshalToStruct() {
